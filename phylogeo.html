@@ -1,0 +1,81 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href='https://fonts.googleapis.com/css?family=Ubuntu+Mono' rel='stylesheet' type='text/css'>
+    <style>
+      * {
+      font-family:  'Ubuntu Mono';
+      <!-- font-size: 14px; -->
+      }
+    </style>
+  </head>
+  
+
+  <body>
+    <div class="post-entry">
+      <p align="justify" style="width:70%">
+        Analyses of the West Nile Virus data set and the simulated data sets presented in the manuscript
+        can be executed using the version of PhyML available from 
+        from <a href="https://github.com/stephaneguindon/phyml">https://github.com/stephaneguindon/phyml</a>.
+      </p>
+
+      <p align="justify" style="width:70%">
+        Retrieve the code using the following commands (git needs to be installed on your computer):
+        <pre class="line-numbers">
+          <code class="language-css">
+            git clone https://github.com/stephaneguindon/phyml.git;
+            git checkout a3f48ef30e6b428bd836067f4494b91f1ec3da10;
+          </code>
+          </pre>
+      </p>
+      
+      <p align="justify" style="width:70%">
+        Compilation of PhyREX should be conducted using the following commands:
+        <pre class="line-numbers">
+          <code class="language-css">
+            sh ./autogen.sh;
+            ./configure --enable-phyrex;
+            make clean;
+            make;
+          </code>
+        </pre>
+      </p>
+
+      <p align="justify" style="width:70%">       
+        Running PhyREX to reproduce the analysis of the West Nile Virus data set first requires
+        downloading the sequence alignment file, the coordinates and two XML configuration files
+        (please run these commands from the src/ directory):
+        <pre class="line-numbers">
+          <code class="language-css">
+            wget http://stephaneguindon.github.io/WNV_lat_long.txt;
+            wget http://stephaneguindon.github.io/WNV.phy;
+            wget http://stephaneguindon.github.io/WNV_detection.xml;            
+            wget http://stephaneguindon.github.io/WNV_survey.xml;            
+          </code>
+        </pre>        
+      </p>
+
+      <p> Running the analysis under the detection scheme can then be done as follows (from the src/
+      directory):
+        <pre class="line-numbers">
+          <code class="language-css">
+            ./phyrex --xml=./WNV_detection.xml
+          </code>
+        </pre>        
+      </p>
+
+      <p> Under the selection scheme :
+        <pre class="line-numbers">
+          <code class="language-css">
+            ./phyrex --xml=./WNV_selection.xml
+          </code>
+        </pre>        
+      </p>
+    </div>
+  </body>
+
+  
+  
+    
+
+  
+</html>
