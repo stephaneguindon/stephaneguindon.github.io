@@ -1,0 +1,722 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>MCEB 2021</title>
+    
+    <link rel="stylesheet" href="dist/reveal.css">
+    <link rel="stylesheet" href="dist/theme/league.css" id="theme">
+    
+    <!-- Theme used for syntax highlighted code -->
+    <link rel="stylesheet" href="plugin/highlight/monokai.css" id="highlight-theme">
+
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+  </head>
+  
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <section class="titlepage center">
+          <div class="title">
+            Bayesian phylogeography along a continuum: sampling its way in a random walk          
+          </div>
+          
+          <div class="authors">
+            Stéphane Guindon<br/>
+          </div>
+          
+          <div class="institution">
+            CNRS, France<br/><br/>
+            <a href="https://twitter.com/MAB_Montpellier?ref_src=twsrc%5Etfw"
+               class="twitter-follow-button" data-show-count="false">
+              @MAB_Montpellier</a><script async src="https://platform.twitter.com/widgets.js"
+                                          charset="utf-8"></script><br/>
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>Thank you for inviting me to give a talk today. Before we start I'd like to draw
+                your attention to the conference MCEB that we are organising again this year. We had to
+                cancel last year's edition but this year, we should be able to have a regular meeting.
+                It will take place in the south of France, in Porquerolles, in June. So, if you'd like to register and
+                even present your work, please feel free to do so through this website. The
+                deadline in Monday.</li>
+              <li>Now, in my talk today, I will focus on  population genetics models with a spatial
+                component. We usually refer to these models as phylogeographic models</li>
+                <li>More specifically,
+               I am interested in incorporating knowledge about spatial sampling patterns in these
+                models. By sampling patterns, I mean that the sampling of genetic sequences in space is
+                not always uniform and that deviations for uniformity may not reflect the outcome of
+                the evolutionary process                
+              </li>
+            </ul>
+        </section>
+        
+        
+        <section>
+          <div class="flipper" style="width:100%;margin-top:7%">
+            <img class="fragment fade-in-then-out" height="480" width="1000" src="fig/eight_challenges1.svg">
+            <img class="fragment" height="380" width="800" src="fig/eight_challenges2.svg">
+          </div>
+          <aside class="notes">
+            <ul>
+              <li> I am not the only one, nor the first person concerned with these issues that
+              impact phylogeography but also other related research areas too</li>
+              <li>In fact, back in 2005, Simon Frost and other fairly knowledgeable people in the
+              field came up with a list of eight challenges in phylodynamics</li>
+              <li>The one challenge that came at the top was about sampling considerations. In particular,
+              Frost et al. claimed that this issue was particularly accute in phylogeography
+              studies whereby oversampling of specific areas may lead to biases in the inference of
+              migration parameters</li>
+            </ul>
+          </aside>
+        </section>
+
+
+        <section data-transition="slide">
+          <div class="flipper" style="width:100%">
+            <img src="fig/asia0.svg">
+            <img class="fragment" src="fig/asia1.svg">
+            <img class="fragment" src="fig/asia2.svg">
+            <img class="fragment" src="fig/asia2bis.svg">
+            <img class="fragment" src="fig/asia3.svg">
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>Before we dig in the core of this talk I would like to start off with a quick thought experiment</li>
+              <li>So, let's imagine that you became aware of the presence of organisms of a new
+                type, typically a virus or a bacteria, in four different places</li>
+              <li>Because you have a vested interest in  phylogeography, you collect and compare the
+              four genomes and corresponding locations</li>
+              <li> From this analysis, you get an estimate of the rate of dispersion
+                <li> Now, it turns out that you were unaware of the actual spatial distribution of
+                your organism, which is in fact broader than what you would have expected from your
+                  sample.</li>
+              <li>Now, the question is: would you get a different if the actual spatial distribution
+              of your organism was this one or this one?</li>
+              <li>The topic of this talk revolves around this sort of questions and, in particular,
+              how statistical modelling can help asnwering it
+            </ul>
+          </aside>
+        </section>
+
+        
+        <section data-transition="concave">
+          <h1>Data</h1>
+          <div>
+            <ul class="spaced" style="margin-top:10%">
+              <li>Geo-referenced genetic sequences</li>
+              <li>Relationship between sequences and locations is not one-to-one</li>
+              <li>Sequence alignment $\rightarrow$ phylogeny
+              <li>Phylogeny + coordinates
+                $\rightarrow$ dispersal and density</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>Ok, so before I give an overview of the different approaches and models in
+              statistical phylogeography, it is good to clarify what sort of data and broad
+                assumptions we are dealing with in phylogeography</li>
+              <li>First of all, the data consist in geo-referenced genetic sequences, that is to say
+                sequences that are labelled with spatial coordinates</li>
+              <li> The relationship between sequences and coordinates is not one-to-one, meaning
+              that identical sequences can be found in different places and the same place can
+                display different sequences</li>
+              <li>Inference usually rely on a hierarchical approach whereby sequences convey
+              information about the phylogeny, and the tree, combined with spatial coordinates at the
+              tips of the tree, helps us infer the rate at which organisms disperse in space. Other
+              useful information about the demography of the population of interest can also be
+              estimated from the tree.
+            </ul>
+          </aside>
+        </section>
+
+
+
+        <section>
+          <h1>Modelling sequences in space and time...</h1>
+          <div class="description">
+            <ul style="margin-top:10%">
+              <li><em>Mechanistic vs. non-mechanistic</em></li>
+              <ul>
+                <li>Mechanistic: relevant biologically</li>
+                <li>Non-mechanistic: flexible</li>
+              </ul>
+              <li style="margin-top:5%"><em>Forward-in-time vs. backward-in-time</em></li>
+              <ul>
+                <li>Forward: relevant biologically, population/sample level</li>
+                <li>Backward: facilitates inference, sample level</li>
+              </ul>
+            </ul>
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>Now, in terms of the properties of the relevant statistical models, what are our
+                options?</li>
+              <li>Well, one often has to chose between a mechanistic model which is built on
+              assumptions that directly derive from our understanding of the biological processes
+                at hand.</li>
+              <li>Unfortunately, mechanistic models are generally difficult to deal with from a
+              computational standpoint. Compromises often need to be found, sometimes leading to
+                models
+              that only capture some of the main features of the biological processes at stake, with
+                the benefit of an increased  computational, mathematical flexibility</li>
+              <li>Also, biological processes unfold forward-in-time, making the inference an inverse
+                problem since it aims at deciphering what the past was given data collected at
+                present. So, one often needs to reverse the direction of time here. A good example
+                is that of the Wright-Fisher model and the coalescent</li>
+              <li>Finally, there are important
+                considerations about the level at which modelling and inference takes place since
+                one generally models the evolution of the whole population while the inference rest
+                on the analysis of a sample taken from that population. Here again, the
+                Wright-Fisher model and the coalescent approximation are a good illustration of
+                that point</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h1>... is a risky business!</h1>
+            <ul class="spaced" style="margin-top:10%">
+                <li>Isolation-by-distance model sensu Wright-Malécot not consistent (Felsenstein's
+                ''pain in torus'')</li>
+                <li>Sometimes non-sensical, e.g., Brownian trajectories never intersect in two dimensions...
+                <li>Sampling consistency: dispersal dynamics of a lineage depends on the size of the sample considered</li>
+            </ul>
+            <aside class="notes">
+              <ul>
+                <li>Experience shows that building models that combine genetic and spatial
+                  information is a risky business</li>
+                <li>In the 40s', Wright and Malécot proposed an extension of the Wright-Fisher
+                model that incorporated a few extra, and apparently innocuous, assumptions about
+                the way offspring disperse around their parents. Yet, Felsenstein showed that these
+                  assumptions were contradictory and this contradiction led the model to make
+                  unrealistic predictions about the spatial distribution of organisms in the long
+                  term </li>
+                <li>Another example, backward-in-time this time, is that of two Brownian
+                  trajectories describing the movements of organisms towards the past. Although
+                  using Brownian motion to model these movements seems like a good idea, we know
+                  mathematically that two Brownian trajectories never intersect on a two-dimensional
+                  space, making this model unsuitable</li>
+                <li>Finally, some models lack sampling consistency, making the expected dispersal
+                rate for instance depend on the number of individuals in the sample, which is, here
+                again, problematic</li>
+              </ul>
+            </aside>
+        </section>
+
+
+        <section>
+          <h1>Structured coalescent</h1>
+          <div style="margin-top:5%">
+          <ul class="spaced" style="width: 60%;float:left">
+            <li>Takahata, Hudson, Notohara (90’)</li>
+            <li>Backward-in-time, mechanistic (asymptotically)</li>
+            <li>Accomodates for "patterns" in sampling </li>
+            <li style="margin-top:5%">Partition into demes in often not driven by biology</li>
+            <li>Ghost demes are an issue</li>
+          </ul>
+          </div>
+          <img data-src="fig/structcoal.svg" style="float: right" height="420" width="420">
+          <div style="margin-top:2%;float:left" class="description">
+            <ul>
+              <li><i>S.G., Guo, Welch, (2016)</i>. Bayesian inference under spatial Λ-Fleming-Viot process:
+              <em>habitat considered as a continuum</em></li>
+            </ul>
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>The structured coalescent addresses some of the shortcomings just mentionned</li>
+              <li>It rests on sound biological and mathematical bases since it derives from an
+              extension of the Wright-Fisher model that regulates population density as opposed to
+                the original version of the IBD model</li>
+              <li>In particular, because it is a backward-in-time model, it does a good job at
+              dealing with non-uniform sampling in different demes</li>
+              <li>Also, the structured coalescent is considered as fairly slow but recent mathematical and computational advances, most notably
+              implemented in the MASCOT plug-in for BEAST2, have substantially improved this aspect. 
+              <li>In my opinion, the main limitation with this model has to do with the fact that
+                the habitat is partitionned in discrete demes</li>
+            </ul>
+          </aside>
+        </section>
+
+
+        <section>
+          <h1>Structured coalescent</h1>
+          <div style="margin-top:5%">
+          <ul class="spaced" style="width: 60%;float:left">
+            <li>Takahata, Hudson, Notohara (90’)</li>
+            <li>Backward-in-time, mechanistic (asymptotically)</li>
+            <li>Accomodates for "patterns" in sampling </li>
+            <li style="margin-top:5%">Partition into demes in often not driven by biology</li>
+            <li>Ghost demes are an issue</li>
+          </ul>
+          </div>
+          <img data-src="fig/ebola.svg" style="float: right" height="420" width="420">
+          <div style="margin-top:2%;float:left" class="description">
+            <ul>
+              <li><i>S.G., Guo, Welch, (2016)</i>. Bayesian inference under spatial Λ-Fleming-Viot process:
+              <em>habitat considered as a continuum</em></li>
+            </ul>
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>It is problematic indeed because this partitionning is not always driven by biology and demes
+                sometimes reflect boundaries that have more to do with geography than the spatial
+              dynamics of the organisms. Furthermore, the impact of the partition chosen on the
+                parameter estimates is seldom assessed</li>
+              <li>Finally, work by Greg Ewing and Allen Rodrigo has shown the occurence of ghost
+                demes, that is to say, demes that were not sampled or hidden, can be
+                problematic for estimating population sizes and migration rates.
+              </li>
+              <li>Back in 2016, together with colleagues from the university of Auckland, we
+              implemented a Bayesian sampler that estimates the parameter of the spatial
+              Lambda-Fleming-Viot model which is a structured coalescent where individuals are
+              distributed along a continuum rather than partitionned across demes. Although this
+              approach was succesfull in alleviating the limitations of the standard structured
+              coalescent, it is quite involved computationally. Yet, we believe that there is room
+              for improvement here and together with my postdoc, Johannes Wirtz, we are currently
+              working on solutions to speed up the inference under this continuous structured coalescent</li>
+            </ul>
+          </aside>
+        </section>
+
+
+        <section>
+          <h1>Mugration model</h1>
+          <div style="margin-top:5%">
+          <ul class="spaced" style="width: 50%;float:left">
+            <li>Lemey et al. (2009)</li>
+            <li>Forward-in-time, not mechanistic</li>
+            <li>Migrations as a CTMC (conditionned on tree)
+            <li style="margin-top:5%">Coalescent as underlying tree-generating process?</li>
+            <li>Does not accomodate for "patterns" in sampling </li>
+          </ul>
+          </div>
+          <img data-src="fig/mugration.svg" style="float: right" height="412" width="490">
+          <aside class="notes">
+            <ul>
+              <li>The mugration model is more recent than the structured coalescent. It was proposed
+              by Lemey and collaborators in 2009 and can be summarised as the forward-in-time
+                version of the structured coalescent.
+              <li>But the two models are is fact quite different</li>
+              <li>First of all, the mugration model completely separates the genealogical aspect
+              from the migrations. Here, migrations are conditionned on the tree and one assume that
+              the tree is generated by a process that is independant from the spatial dynamics of
+                the process.</li>
+                <li>This simplifying assumptions allow for quick calculations and one used here a
+                  sum product algo to integrate over migration histories</li>
+            </ul>
+          </aside>
+        </section>
+
+        <section>
+          <h1>Mugration model</h1>
+          <div style="margin-top:5%">
+            <ul class="spaced" style="width: 50%;float:left">
+              <li>Lemey et al. (2009)</li>
+              <li>Forward-in-time, not mechanistic</li>
+              <li>Migrations as a CTMC (conditionned on tree)
+              <li style="margin-top:5%">Coalescent as underlying tree-generating process?</li>
+              <li>Does not accomodate for "patterns" in sampling </li>
+            </ul>
+          </div>
+          <img data-src="fig/basta.svg" style="float: right" height="412" width="490">
+          <aside class="notes">
+            <ul>
+              <li>But the most problematic shortcoming with this model has to do with the assumption
+              that sample size in each deme is proportional to the relative size of the
+                corresponding subpopulation</li>
+              <li>Nicola De Maio and colleagues have shown in 2015 that serious biases in the
+                inference can arise when this assumption is violated. Their results also indicate for
+                instance that the mugration model can be overconfident in the location of the MRCA
+                compared to BASTA which approximates the structured coalescent</li>
+            </ul>
+          </aside>
+        </section>
+
+
+        <section>
+          <h1>Relaxed random walk</h1>
+          <div style="margin-top:5%">
+            <ul class="spaced" style="width: 50%;float:left">
+              <li>Lemey et al. (2010)</li>
+              <li>Forward-in-time, not mechanistic</li>
+              <li>Migrations as a diffusion process</li>
+              <li style="margin-top:5%">Convergence to Kingman's coalescent?</li>
+              <li>Does not accomodate for "patterns" in sampling </li>
+            </ul>
+          <img data-src="fig/rrw.svg" style="float: right" height="440" width="430">
+          </div>
+          <div style="margin-top:1%;float:left" class="description">
+            <ul>
+              <li><em><i>Kalkauskas, A. et al. (2020):</i></em> migration parameters biased by
+              non-uniform sampling over the habitat.</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>In 2010 Lemey et al. proposed the relaxed random walk model which is very similar
+              in spirit to the mugration model, the main difference being that individuals are
+                distributed along a continuum instead of being partitionned into discrete demes</li>
+              <li>So, we still have a non-mechanistic forward-in-time model, that models migrations
+                using a Brownian diffusion process</li>
+              <li>It is very efficient computationnaly since we can analytically integrate over the
+                ancestral locations using a method that Felsenstein put forward in 1973.</li>
+              <li>Yet, here again, we make the assumption that the tree-generating process is
+              independent from the spatial dynamic, although because space is continuous, it could
+              be the case that convergence to Kingman's coalescent applies under some circumstances</li>
+              <li>But the most important pitfall of the relaxed random walk model in my opinion has
+              to do with spatial sampling patterns. As we will see later, the model relies on very
+                specific assumptions about the way individuals are sampled in space.  </li>
+              <li>When these assumptions are violated, we showed in this study led by Nicola De Maio,
+                that biases in the inference of parameters arise in a very similar fashion as with
+                the mugration model.
+            </ul>
+          </aside>
+        </section>
+
+        
+        <section data-transition="concave">
+          <h1>Our contribution</h1>
+          <div style="margin-top:10%" class="description">
+            <ul class="spaced" style="width: 100%;float:left">
+              <li>Discretizing space is often problematic</li>
+              <li>Ignoring patterns in spatial sampling is a pervasive issue</li>
+              <li style="margin-top:5%">Keep flexibility of Brownian motion in two dimensions, forward-in-time</li>
+              <li>Incorporate <em>sampling schemes</em> in the model</li>
+              <li>Design appropriate Bayesian inference approach</li>
+            </ul>
+          </div>
+          <aside class="notes">
+            <ul>
+              <li> Assessing some of the main approaches in phylogeography led us to the conclusion
+                that discretizing space is often problematic</li>
+              <li> and, perhaps more importantly, ignoring patterns in sampling individuals
+              throughout their habitat leads to serious issues</li>
+              <li>Together with Nicola De Maio, we decided to keep the flexibility afforded by the
+                relaxed random walk model</li>
+              <li>Our main achievement, as I will show shortly, was to explicitly incorporate
+                spatial sampling schemes in this model  </li>
+              <li>In order to do so, we also needed to design specific statistical tools in the
+              context of Bayesian inference using Markov Chain Monte Carlo techniques</li>
+            </ul>
+          </aside>
+        </section>
+        
+        <section data-transition="slide"> 
+          <h1>Sampling schemes</h1> 
+          <div style="margin-top:10%" class="description"> 
+            <ul class="spaced" style="width: 50%;float:left"> 
+              <li class="fragment"><em>Detection scheme:</em> places of sampling purely driven 
+                by the outcome of the migration process 
+                running along the tree.  
+            </ul> 
+          </div> 
+          <div class="flipper" style="width:40%;float:left"> 
+            <img class="fragment" style="float: right" height="480" width="480" src="fig/detection0.svg"> 
+            <img class="fragment" style="float: right" height="480" width="480" src="fig/detection1.svg"> 
+            <img class="fragment" style="float: right" height="480" width="480" src="fig/detection2.svg"> 
+            <img class="fragment" style="float: right" height="480" width="480" src="fig/detection3.svg"> 
+            <img class="fragment" style="float: right" height="480" width="480" src="fig/detection4.svg"> 
+            <img class="fragment" style="float: right" height="480" width="480" src="fig/detection5.svg"> 
+          </div>           
+          <aside class="notes">
+            <ul>
+              <li>Let's first describe the different sampling schemes.</li>
+              <li>We identified two of these, which we call the detection and the survey
+                schemes. </li>
+              <li> Under both schemes, we assume that a Brownian diffusion process governs the
+              dispersal 
+              <li>The detection scheme is in fact the one that the relaxed random walk model assumes by default</li>
+              <li>Under this  sampling scheme,  we assume that we are able to monitor the whole
+              habitat at all points in time </li>
+              <li> and the sampled locations are given by the outcome of the evolutionary
+                process</li>
+            </ul>
+          </aside>
+        </section> 
+
+        <section> 
+          <h1>Sampling schemes</h1> 
+          <div style="margin-top:10%" class="description"> 
+            <ul class="spaced" style="width:50%;float:left"> 
+              <li><em>Detection scheme:</em> places of sampling purely driven 
+                by the outcome of the migration process 
+                running along the tree.  
+            </ul> 
+          </div> 
+          <div class="flipper" style="width:40%;float:right"> 
+            <img style="float:right;width:90%" height="480" width="480" src="fig/detection6.svg"> 
+          </div>           
+          <aside class="notes">
+            <ul>
+              <li>So, here the black dots correspond to the locations generated by evolution and the
+                yellow circles are the locations generated by the sampling process</li>
+              <li>It is essential to realize  that there are two distinct processes involved here:
+              evolution is generating locations and sampling determines where we collect the
+                data</li>
+            </ul>
+          </aside>
+        </section> 
+
+        
+        <section> 
+          <h1>Sampling schemes</h1> 
+          <div style="margin-top:10%" class="description"> 
+            <ul class="spaced" style="width:50%;float:left"> 
+              <li><em>Detection scheme:</em> places of sampling purely driven 
+                by the outcome of the migration process 
+                running along the tree.  
+              <li><em>Survey scheme:</em> places of sampling
+                NOT determined by the outcome of the
+                evolutionary process. Driven by practical considerations instead. 
+            </ul> 
+          </div> 
+          <div class="flipper" style="width:40%;float:right"> 
+            <img style="float:right;width:90%" height="480" width="480" src="fig/survey0.svg"> 
+          </div>           
+          <aside class="notes">
+            <ul>
+              <li>Under the survey sampling scheme, we assume that the sampling process is not
+                driven by the outcome of the evolutionary process </li>
+              <li>In fact, evolution may have generated potential observations all over the
+              habitat, potentially in a non-uniform fashion and sampling is governed here by
+                considerations that have nothing to do with the evolutionary process</li>
+              <li>In particular, we could assume here that we selected these particular locations
+              for sampling simply because these spots are easier or cheaper to access</li>
+            </ul>
+          </aside>
+        </section> 
+
+        
+        <section> 
+          <h1>Bayesian modelling</h1> 
+          <div class="flipper" style="margin-top:-5%;margin-left:5%;"> 
+            <img  height="780" width="1380" src="fig/detectposterior0.svg"> 
+            <img class="fragment" height="780" width="1380" src="fig/detectposterior1.svg"> 
+            <img class="fragment" height="780" width="1380" src="fig/detectposterior2.svg"> 
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>Now, we need to translate these ideas into proper mathematical arguments that can
+                be incoporated in a statistical model</li>
+              <li>We use a Bayesian framework here, meaning that we need to define what the joint
+                posterior density of all model paramters is</li>
+              <li>This posterior is expressed as the product of Felsenstein's likelihood, the
+                coalescent and priors on model parameter
+            </ul>
+          </aside>
+        </section> 
+
+        <section> 
+          <h1>Detection scheme</h1>
+          <div class="flipper" style="margin-top:-5%;margin-left:5%;"> 
+            <img height="780" width="1380" src="fig/detectposterior3.svg"> 
+          </div>
+          <div style="margin-top:-3%;float:left" class="description">
+            <ul>
+              <li class="fragment">$s(\mathbf{e}|\mathbf{l},\tau,\sigma,\theta) := \delta(\mathbf{l}-\mathbf{e})
+              \rightarrow$ the outcome of the evolutionary process ($\mathbf{l}$) fully determines
+              that of the sampling process ($\mathbf{e}$)</li>
+            </ul> 
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>Under the detection scheme, the probabilistic distribution of the sampling
+              locations e is conditionned on l, the outcome of the evolutionary process</li>
+              <li>Because the sampling locations, e, exactly match the locations generated by the
+                evolutionary process, l, we use a delta Dirac function here</li>
+              <li>The probability density of the locations at all nodes in the tree, l, corresponding
+                to the outcome of the evolutionary process, is given a simple product of bivariate normal densities</li>
+            </ul>
+          </aside>
+        </section> 
+
+        <section> 
+          <h1>Survey scheme</h1>
+          <div class="flipper" style="margin-top:-6%;margin-left:5%;"> 
+            <img height="700" width="1380" src="fig/surveyposterior0.svg"> 
+          </div>
+          <div style="margin-top:-5%;float:left" class="description">
+            <ul>
+              <li>$s(\mathbf{e}) \rightarrow$ sampling not conditionned on the outcome of the evolutionary process</li>
+              <li>$f(\mathbf{l}|\tau,\sigma,\mathbf{e}) \rightarrow$ probability that evolution
+            generated $\mathbf{l}$ given that we collect information at these same places ($\mathbf{e}$).</li>
+            </ul> 
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>Under the survey scheme, the conditionning on l and e is somehow done the other way around</li>
+              <li>Sampled locations do not derive from the outcome of the evolutionary process</li>
+              <li>and the vector of node locations is conditionned on the sampled locations</li>
+              <li> In the following, we will focus on the survey scheme and in particular on the
+              product of these two densities because, as we will see shortly, evaluating it is not straightforward</li>
+            </ul>
+          </aside>
+        </section> 
+
+
+
+
+        <section> 
+          <h1>Challenges with the survey scheme</h1>
+          <div style="margin-top:5%;margin-left:5%;"> 
+            <img height="162" width="1000" src="fig/surveypdf.svg">
+          </div> 
+          <div style="margin-top:5%;float:left" class="description">
+            <ul>
+              <li>$Z(\sigma,\theta) = f(\mathbf{l}|\sigma,\theta)$ not computationally tractable</li>
+              <li>Function of dispersal and effective pop. size</li> 
+              <li>Updating $\sigma$ or $\theta$ using Metropolis-Hastings and ignoring 
+                $Z (\sigma,\theta)$ is incorrect!</li> 
+              <li>Belongs to the class of <em>''doubly intractable''</em> problems (see. e.g., 
+                S.G., 2018)</li> 
+            </ul>
+          </div> 
+          <aside class="notes">
+            <ul>
+              <li>The fact that we are conditionning the distribution  of the node locations l on the sampled locations
+              e implies that the densitis of interest involve a normalization term, Z </li>
+              <li>Roughly speaking, this term corresponds to the probability that the evolutionary process generated
+              tip location that match the sampling locations</li>
+              <li>This normalization term is a function of the dispersal and coalescent rates,
+              meaning that it cannot be ignored when updating these parameters in a standard
+              Metropolis Hastings step of a MCMC sampler</li>
+              <li>So, the inference problem is doubly intractable. Two intractable densities: the
+              one at the denominator of Bayes formula that the MCMC algorithm deals with, and Z,
+              which, unfortunately, does not cancel in the standard MCMC</li>
+              <li>It turns out that doubly intractable problems also arise in the context of
+              molecular dating whereby the distribution of trees is conditionned on calibration of
+              the ages of some  nodes. I happened to have worked on these questions recently and
+              was able to re-use some of the theory developped for that problem</li>
+            </ul>
+          </aside>
+        </section>
+
+
+        <section data-transition="slide"> 
+          <h1>Exchange algorithm: rationale</h1>
+          <!-- <div class="flipper" style="margin-top:10%;margin-left:5%;width:100%"> -->
+          <div class="flipper" style="margin-top:10%;width:100%">
+            <!-- <img class="fragment fade-in-then-out" width="600" src="fig/surveyhr0.svg"> -->
+            <!-- <img class="fragment fade-in-then-out" width="600" src="fig/surveyhr1.svg"> -->
+            <!-- <img class="fragment fade-in-then-out" width="500" src="fig/surveyhr2.svg"> -->
+            <!-- <img class="fragment fade-in-then-out" height="400" width="600" src="fig/surveyhr3.svg"> -->
+            <img class="fragment fade-in-then-out" height="300" src="fig/surveyhr4.svg">
+            <img class="fragment fade-in-then-out" height="300" src="fig/surveyhr5.svg">
+            <img class="fragment fade-in-then-out" height="300" src="fig/surveyhr6.svg">
+            <img class="fragment fade-in-then-out" width="600" src="fig/surveyhr7.svg">
+            <img class="fragment fade-in-then-out" width="600" src="fig/surveyhr8.svg">
+          </div>
+          <aside class="notes">
+            <ul>
+              <li>The exchange algorithm was specifically designed by statisticians about ten years
+              ago to tackle doubly intractable problems</li>
+              <li>Í'm giving here a step-by-step explanation of its rationale in the context we are
+              interested in</li>
+            </ul>
+            </aside>
+        </section>
+
+        
+        <section> 
+          <h1>Exchange algorithm, extended</h1>
+          <div style="margin-top:10%;float:left" class="spaced">
+            <ul>
+              <li>$\mathbf{x} \sim f(\cdot|\sigma) h(\cdot|\theta)$, i.e., the auxiliary tree and
+              locations must be sampled from the tree-and-location generating process (given
+                $\mathbf{e}$ but ignoring $\mathbf{s}$)</li>
+              <li>Direct sampling is not feasible...</li>
+              <li class="fragment">Use standard MCMC instead</li>
+            </ul>
+          </div>
+          <div class="flipper" style="margin-top:30%;margin-left:5%;">  
+            <img class="fragment fade-in-then-out" height="150" width="1000" src="fig/surveymcmc0.svg"> 
+            <img class="fragment fade-in-then-out" height="150" width="1000" src="fig/surveymcmc1.svg"> 
+          </div> 
+        </section>
+
+      
+        
+        <section data-transition="concave"> 
+          <h1>Simulation results: diffusion estimates</h1>
+          <div class="flipper" style="margin-top:0%;margin-left:0%;">  
+            <img height="100%" width="100%" src="fig/diffusion.svg">             
+          </div>
+        </section>
+        
+
+        <section data-transition="slide"> 
+          <h1>West Nile Virus: location of MRCA</h1>
+          <div class="flipper" style="margin-top:5%;margin-left:0%;">  
+            <img height="90%" width="100%" src="fig/WNV_location.png">             
+          </div>
+        </section>
+
+        <section data-transition="slide"> 
+          <h1>West Nile Virus</h1>
+          <div class="flipper" style="margin-top:5%;margin-left:0%;">  
+            <img height="70%" width="100%" src="fig/WNV_other.png">             
+          </div>
+        </section>
+
+
+
+
+        <section data-transition="concave"> 
+          <h1>Conclusion</h1>
+          <div style="margin-top:10%;float:left" class="description">
+            <ul>
+              <li>Location of samples may or may not match with the expected outcome of the
+                evolutionnary process </li>
+              <li> <em> Detection scheme vs. survey scheme</em> $\rightarrow$ impact on the inference is substantial 
+              <li> <em>Exchange algorithm</em> suitable for inference under survey scheme</li>
+              <li style="margin-top:5%"> Fix "mugration" model</li>
+              <li> Combine distinct sampling schemes in the same analysis </li>
+              <li style="margin-top:5%"> Collaborator: <em>Nicola De Maio</em></li>
+              <li> Funding: ANR GENOSPACE </li>
+            </ul>
+        </section>
+
+
+        
+    
+    <script src="plugin/math/math.js"></script>
+    <script src="dist/reveal.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script>
+      // More info about initialization & config:
+      // - https://revealjs.com/initialization/
+      // - https://revealjs.com/config/
+      Reveal.initialize({
+	  hash: true,
+          controls: true,
+          center: false,
+          history: true,
+          width: 1280,
+          height: 720,
+          slideNumber: false,
+          transition: 'none',
+          math: {
+              mathjax: 'https://cdn.jsdelivr.net/gh/mathjax/mathjax@2.7.8/MathJax.js',
+              config: 'TeX-AMS_HTML-full',
+              // pass other options into `MathJax.Hub.Config()`
+              TeX: { Macros: { RR: "{\\bf R}" } }
+          },
+	  // Learn about plugins: https://revealjs.com/plugins/
+	  plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath ]
+      });
+    </script>
+  </body>
+</html>
