@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="fr">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -24,7 +24,7 @@
   <body>
     <div class="reveal">
       <div class="slides">
-
+        
         <section class="titlepage center">
           <div class="title">
             Échantillonnage de distributions  non-normalisées
@@ -49,8 +49,7 @@
         <section>
           <h1>Densité de probabilité: $f(x)dx \simeq \Pr(x \in \mathrm{d}x)$ </h1>
           <div class="flipper" style="width:100%;margin-top:5%">
-            <!-- <img class="fragment fade-out" height="90%" src="fig/expdens.svg"> -->
-            <img height="90%" src="fig/expdensprob.svg">
+            <img height="500" src="fig/expdensprob.svg" alt="">
           </div>
           <aside class="notes">
           </aside>
@@ -59,7 +58,7 @@
         <section>
           <h1>Probabilité cumulée: $F(x) = \int_0^x f(u) \mathrm{d}u$</h1>
           <div class="flipper" style="width:100%;margin-top:5%">
-            <img height="90%" src="fig/expcdf.svg">
+            <img height="500" src="fig/expcdf.svg" alt="">
           </div>
           <aside class="notes">
           </aside>
@@ -69,12 +68,12 @@
         <section>
           <h1>Echantillonnage inverse</h1>
           <div class="flipper" style="width:100%;margin-top:5%">
-            <img class="fragment fade-in-then-out" height="90%" src="fig/expdenscdf0.svg">
-            <img class="fragment fade-in-then-out" height="90%" src="fig/expdenscdf1.svg">
-            <img class="fragment fade-in-then-out" height="90%" src="fig/expdenscdf2.svg">
-            <img class="fragment fade-in-then-out" height="90%" src="fig/expdenscdf3.svg">
-            <img class="fragment fade-in-then-out" height="90%" src="fig/expdenscdf4.svg">
-            <img class="fragment fade-in-then-out" height="90%" src="fig/expdenscdf5.svg">
+            <img class="fragment fade-in-then-out" height="500" src="fig/expdenscdf0.svg" alt="">
+            <img class="fragment fade-in-then-out" height="500" src="fig/expdenscdf1.svg" alt="">
+            <img class="fragment fade-in-then-out" height="500" src="fig/expdenscdf2.svg" alt="">
+            <img class="fragment fade-in-then-out" height="500" src="fig/expdenscdf3.svg" alt="">
+            <img class="fragment fade-in-then-out" height="500" src="fig/expdenscdf4.svg" alt="">
+            <img class="fragment fade-in-then-out" height="500" src="fig/expdenscdf5.svg" alt="">
           </div>
           <aside class="notes">
           </aside>
@@ -85,9 +84,9 @@
           <h1>Algorithme Monte-Carlo "accept/reject"</h1>
           <h1>$\pi(x)=\frac{1}{2}(x-1)$, $1\leq x\leq 3$</h1>
           <div class="flipper" style="width:100%;margin-top:5%">
-            <img class="fragment fade-in-then-out" height="80%" src="fig/mctarget0.svg">
-            <img class="fragment fade-in-then-out" height="80%" src="fig/mctarget1.svg">
-            <img class="fragment fade-in-then-out" height="80%" src="fig/mctarget2.svg">
+            <img class="fragment fade-in-then-out" height="400" src="fig/mctarget0.svg" alt="">
+            <img class="fragment fade-in-then-out" height="400" src="fig/mctarget1.svg" alt="">
+            <img class="fragment fade-in-then-out" height="400" src="fig/mctarget2.svg" alt="">
           </div>
           <aside class="notes">
           </aside>
@@ -103,7 +102,7 @@
          obs = rep(NA, numobs)
          count = 1
 
-         while (count <= numobs)
+         while (count &lt;= numobs)
                {
                  # Valeur en x ~U[1,3]
                  x.val = 1 + (3 - 1)*runif(1);
@@ -115,7 +114,7 @@
                  pi.x = 0.5*(x.val - 1);
 
                       
-                 if (y.val < pi.x) # y.val < pi.x -> valide!
+                 if (y.val &lt; pi.x) # y.val &lt; pi.x -> valide!
                     {
                       echantillon[count] = x.val
                       count = count + 1
@@ -131,8 +130,8 @@
         <section>
           <h1>Chaînes de Markov par Monte Carlo</h1>
           <div class="flipper" style="width:50%;margin-top:5%;float:left">
-            <img class="fragment fade-in-then-out" height="70%" src="fig/mcmc0.svg">
-            <img class="fragment " height="70%" src="fig/mcmc1.svg">
+            <img class="fragment fade-in-then-out" height="400" src="fig/mcmc0.svg" alt="">
+            <img class="fragment " height="400" src="fig/mcmc1.svg" alt="">
           </div>
           <div class="flipper" style="width:50%;margin-top:5%;float:right">
             <ul class="fragment" style="float:right">
@@ -181,7 +180,7 @@
          pi = c(1/2,1/4,1/4)
          idx.cur = 1
 
-         while (count <= chain.len)
+         while (count &lt;= chain.len)
                {
                  # Propose une nouvelle valeur de x
                  idx.prop = sample(1:3,size=1);
@@ -190,7 +189,7 @@
                  mh.ratio = pi[idx.prop]/pi[idx.cur];
 
                 # Accepte nouvel état avec proba min(1,mh.ratio)
-                 if (!(runif(1) < mh.ratio))  
+                 if (!(runif(1) &lt; mh.ratio))  
                     {
                       echantillon[count] = idx.prop
                       idx.cur = idx.prop
@@ -211,14 +210,14 @@
         
         <section>
           <h1>Métropolis-Hastings & inférence Bayésienne</h1>
-          <div style="width:100%;margin-top:6%" align="left">
+          <div style="width:100%;margin-top:6%">
             Formule de Bayes:
             $$\pi(\theta,d):=\text{posterior}(\theta|d) =
             \frac{\text{vraisemblance}(d|\theta) \times \text{prior}(\theta)}{\int
             \text{vraisemblance}(d|\theta) \times \text{prior}(\theta) \mathrm{d}{\theta}},$$
             où $d$ correspond aux données, $\theta$ est le paramètre du modèle.
           </div>
-          <div style="width:100%;margin-top:3%" align="left">
+          <div style="width:100%;margin-top:3%">
             Par exemple:<br>
             <ul>
               <li>$d$: taille des élèves de 6ème dans le collège X</li>
@@ -233,15 +232,15 @@
 
         <section>
           <h1>Métropolis-Hastings & inférence Bayésienne</h1>
-          <div style="width:100%;margin-top:10%" align="left">
+          <div style="width:100%;margin-top:10%">
             $$\pi(\theta,d)=
             \frac{\text{vraisemblance}(d|\theta) \times \text{prior}(\theta)}{\mathcal{Z}_A(d)}.$$
           </div>
-          <div style="width:100%;margin-top:3%" align="left">
+          <div style="width:100%;margin-top:3%">
             $\mathcal{Z}_A(d)$, le terme de normalisation de $\pi(\theta,d)$ ci-dessus, ne peut généralement pas
             être évalué aisément
           </div>
-          <div class="fragment" style="width:100%;margin-top:3%" align="left">
+          <div class="fragment" style="width:100%;margin-top:3%">
             Metropolis(-Hastings) s'en accommode:)
             \begin{eqnarray}p(\theta'|\theta) =
             \min\left(1,\frac{\pi(\theta',d)}{\pi(\theta,d)}\right) 
@@ -256,7 +255,7 @@
 
         <section>
           <h1>Limites de Métropolis-Hastings</h1>
-          <div style="width:100%;margin-top:10%" align="left">
+          <div style="width:100%;margin-top:10%">
             Pour certains problèmes, la vraisemblance prend la forme suivante:
             \begin{eqnarray}
             \text{vraisemblance}(d|\theta) = \frac{h(d;\theta)}{\mathcal{Z}_B(\theta)}
@@ -264,17 +263,18 @@
             Typiquement, on a $\mathcal{Z}_B(\theta) = \int_{\theta \in \mathcal{X}} h(d;\theta)
             \mathrm{d}\theta$, où $\mathcal{X}$ est un sous-ensemble des valeurs que peut prendre
             $\theta$ $\leftrightarrow$ seules certaines valeurs de $\theta$ font sens.
+          </div>
         </section>
 
 
         <section>
           <h1>Limites de Métropolis-Hastings</h1>
-          <div style="width:100%;margin-top:10%" align="left">
+          <div style="width:100%;margin-top:10%">
             Pour certain problèmes, la vraisemblance prend la forme suivante:
             \begin{eqnarray}
             \text{vraisemblance}(d|\theta) = \frac{h(d;\theta)}{\mathcal{Z}_B(\theta)}
             \end{eqnarray}
-          <div style="width:100%;margin-top:3%;position:relative" align="left">
+            <div style="width:100%;margin-top:3%;position:relative">
             <p class="fragment fade-in" style="position:absolute; margin-left: auto; margin-right:
             auto; left: 0; right: 0;" data-fragment-index="0">Metropolis(-Hastings) ne s'en
             accommode pas :(
@@ -290,13 +290,14 @@
             \min\left(1,\frac{\pi(\theta',d)}{\pi(\theta,d)}\right) 
             =\min\left(1,\frac{\text{vraisemblance}(d|\theta') \times \text{prior}(\theta')}{\text{vraisemblance}(d|\theta) \times \text{prior}(\theta)}\right)
             \end{eqnarray}</p>
+            </div>
           </div>
         </section>
 
 
         <section>
           <h1>Algorithme d'échange</h1>
-          <div style="width:100%;margin-top:3%;position:relative" align="left">
+          <div style="width:100%;margin-top:3%;position:relative">
           <ul class="spaced">
             <li>Proposé en 2012 par Iain Murray, Zoubin Ghahramani, David J. C. MacKay.</li>
             <li>Idée maîtresse: introduction d'une variable auxilliaire $e$ de structure similaire à
@@ -304,8 +305,10 @@
               données réelles $d$.</li>
             <li>$e$ est échantillonné dans  $h(e;\theta')/\mathcal{Z}_B(\theta')$ </li>
             <li>Probabilité de transition $\theta \rightarrow \theta'$:  </li>
-            <p class="fragment fade-out" style="position:absolute; margin-left: auto; margin-right:
-                                               auto; left: 0; right: 0;" data-fragment-index="0">
+          </ul>
+          <div>
+              <p class="fragment fade-out" style="position:absolute; margin-left: auto; margin-right:
+                 auto; left: 0; right: 0;" data-fragment-index="0">
               \begin{eqnarray}p(\theta'|\theta) =
               \min\left(1,\frac{\pi(\theta',d,\theta,e)}{\pi(\theta,d,\theta',e)}\right) 
               =\min\left(1,\frac{h(d;\theta') h(e;\theta) \mathcal{Z}_B(\theta)
@@ -313,16 +316,16 @@
               \mathcal{Z}_B(\theta') \mathcal{Z}_B(\theta) \text{prior}(\theta)}\right)
               \end{eqnarray}
               </p>
-            <p class="fragment fade-in" style="position:absolute; margin-left: auto; margin-right:
-                                                auto; left: 0; right: 0;" data-fragment-index="0">
-              \begin{eqnarray}p(\theta'|\theta) =
-              \min\left(1,\frac{\pi(\theta',d,\theta,e)}{\pi(\theta,d,\theta',e)}\right) 
-              =\min\left(1,\frac{h(d;\theta') \times h(e;\theta) \times 
-              \text{prior}(\theta')}{h(d;\theta) \times h(e;\theta') \times
-              \text{prior}(\theta)}\right)
-              \end{eqnarray}
+              <p class="fragment fade-in" style="position:absolute; margin-left: auto; margin-right:
+                 auto; left: 0; right: 0;" data-fragment-index="0">
+                \begin{eqnarray}p(\theta'|\theta) =
+                \min\left(1,\frac{\pi(\theta',d,\theta,e)}{\pi(\theta,d,\theta',e)}\right) 
+                =\min\left(1,\frac{h(d;\theta') \times h(e;\theta) \times 
+                \text{prior}(\theta')}{h(d;\theta) \times h(e;\theta') \times
+                \text{prior}(\theta)}\right)
+                \end{eqnarray}
               </p>
-          </ul>
+            </div>
           </div>
         </section>
 
@@ -330,12 +333,18 @@
         <section data-transition="slide"> 
           <h1>Applications à la phylogéographie</h1> 
           <div class="flipper" style="width:40%;position:relative;float:right" > 
-            <img class="fragment" style="float:right" height="480" width="480" src="fig/detection0.svg"> 
-            <img class="fragment" style="float:right" height="480" width="480" src="fig/detection1.svg"> 
-            <img class="fragment" style="float:right" height="480" width="480" src="fig/detection2.svg"> 
-            <img class="fragment" style="float:right" height="480" width="480" src="fig/detection3.svg"> 
-            <img class="fragment" style="float:right" height="480" width="480" src="fig/detection4.svg"> 
-            <img class="fragment" style="float:right" height="480" width="480" src="fig/detection5.svg"> 
+            <img class="fragment" style="float:right" height="480" width="480"
+            src="fig/detection0.svg" alt=""> 
+            <img class="fragment" style="float:right" height="480" width="480"
+            src="fig/detection1.svg" alt=""> 
+            <img class="fragment" style="float:right" height="480" width="480"
+            src="fig/detection2.svg" alt=""> 
+            <img class="fragment" style="float:right" height="480" width="480"
+            src="fig/detection3.svg" alt=""> 
+            <img class="fragment" style="float:right" height="480" width="480"
+            src="fig/detection4.svg" alt=""> 
+            <img class="fragment" style="float:right" height="480" width="480"
+            src="fig/detection5.svg" alt=""> 
           </div>           
           <div class="description" style="width:60%;position:relative;margin-top:10%;float:left">  
             <ul class="spaced">  
@@ -354,7 +363,7 @@
             </ul> 
           </div> 
           <div class="flipper" style="width:40%;float:right"> 
-            <img style="float: right" height="480" width="480" src="fig/detection6.svg"> 
+            <img style="float: right" height="480" width="480" src="fig/detection6.svg" alt=""> 
           </div>           
         </section> 
 
@@ -371,21 +380,21 @@
             </ul> 
           </div> 
           <div class="flipper" style="width:40%;float:right"> 
-            <img style="float:right" height="480" width="480" src="fig/survey0.svg"> 
+            <img style="float:right" height="480" width="480" src="fig/survey0.svg" alt=""> 
           </div>           
         </section> 
 
         <section data-transition="concave"> 
           <h1>Résulats de simulations -- diffusion</h1>
           <div class="flipper" style="margin-top:0%;margin-left:0%;">  
-            <img height="100%" width="100%" src="fig/diffusion.svg">             
+            <img height="500" width="1000" src="fig/diffusion.svg" alt="">             
           </div>
         </section>
 
         <section data-transition="slide"> 
           <h1>West Nile Virus -- origines gégraphiques</h1>
           <div class="flipper" style="margin-top:5%;margin-left:0%;">  
-            <img height="90%" width="100%" src="fig/WNV_location.png">             
+            <img height="500" width="1000" src="fig/WNV_location.png" alt="">             
           </div>
         </section>
 
@@ -417,5 +426,7 @@
 	  plugins: [ RevealMarkdown, RevealHighlight, RevealNotes, RevealMath ]
       });
     </script>
+      </div>
+    </div>
   </body>
 </html>
