@@ -1,8 +1,15 @@
 <phyrex run.id="detection" output.file="wnv" mcmc.chain.len="1E+8" mcmc.sample.every="1000"
         mcmc.print.every="1000" mcmc.burnin="1E+6" mutmap="no" ignore.sequences="no">
 
-  <spatialmodel name="rrw" sampling="detection"/>
-
+  <!-- Model of spatial dispersion (RRW) -->
+  <spatialmodel name="rrw+gamma" sampling="detection" dispersal.prior.mean="10"/>
+  
+  <!-- Model of rate variation across lineages -->
+  <lineagerates model="lognormal"/>
+  
+  <!-- Model of rate variation across lineages -->
+  <treegenerating model="coalescent" neff.prior.mean="10" expgrowth="yes"/>
+  
   <!-- Tree topology -->
   <topology> 
     <instance id="T1" init.tree="BioNJ"/>
